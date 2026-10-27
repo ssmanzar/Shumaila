@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Real Human Voice Studio</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="nav-content">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L12 22" stroke="currentColor" stroke-width="2"/>
+                    <path d="M2 12L22 12" stroke="currentColor" stroke-width="2"/>
+                    <path d="M5 5L19 19" stroke="currentColor" stroke-width="2"/>
+                    <path d="M19 5L5 19" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>Voice AI Studio</span>
+            </div>
+            <div class="server-status-badge">
+                <span class="status-dot" id="server-status-dot"></span>
+                <span id="server-status-text">Server: Checking...</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="hero-band">
+        <div class="container">
+            <header class="header">
+                <h1>AI Real Human Voice Studio</h1>
+                <p class="subtitle">Video translate karein, Urdu text ko natural insani aawaz mein badlein, ya 100% Real Human Voice Clone karein!</p>
+            </header>
+
+            <div class="card feature-card" id="app-container">
+                <form id="processing-form">
+                    
+                    <!-- 1. Audio / Action Mode Selection -->
+                    <div class="form-group">
+                        <label class="section-title">1. Aap Kya Karna Chahte Hain?</label>
+                        <div class="radio-group">
+                            <label class="radio-card-label active" id="label-ai-translate">
+                                <input type="radio" name="audio_option" value="ai_translate" checked onchange="toggleAudioUpload()">
+                                <span>🎬 Video Translate (Auto English Voice)</span>
+                            </label>
+                            <label class="radio-card-label" id="label-voice-clone">
+                                <input type="radio" name="audio_option" value="voice_clone" onchange="toggleAudioUpload()">
+                                <span>🎙️ Real Human Voice Clone (Video)</span>
+                            </label>
+                            <label class="radio-card-label" id="label-text-translate">
+                                <input type="radio" name="audio_option" value="text_translate" onchange="toggleAudioUpload()">
+                                <span>✍️ Text to Voice (Urdu / English)</span>
+                            </label>
+                            <label class="radio-card-label" id="label-custom-audio">
+                                <input type="radio" name="audio_option" value="custom_audio" onchange="toggleAudioUpload()">
+                                <span>🎵 Apna Custom Audio Lagayein</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 2. Video Upload Section (Hidden only in text mode) -->
+                    <div class="form-group" id="video-upload-group">
+                        <label class="section-title">2. Video Upload Karein</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="video-upload" name="video_file" accept=".mp4,.mov,.mkv,.avi" class="file-input">
+                            <div class="file-upload-visual">
+                                <span id="video-file-name">Select Video File (.mp4, .mov, .mkv)</span>
+                                <button type="button" class="button-secondary">Browse</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Text to Speech Input (Visible in text_translate) -->
+                    <div class="form-group hidden" id="text-translate-section">
+                        <label class="section-title">2. Urdu ya English Text Likhein</label>
+                        <textarea id="urdu-text-input" class="urdu-textarea" placeholder="Yahan text enter karein... (Urdu ya English dono likh sakte hain)" rows="5"></textarea>
+                        <p class="helper-text">💡 Agar Urdu likhenge toh English voice ke liye auto-translate hoga, ya phir neeche se Urdu (Uzma/Asad) voice chunein.</p>
+                    </div>
+
+                    <!-- 4. Custom Audio Upload (Visible in custom_audio) -->
+                    <div class="form-group hidden" id="custom-audio-section">
+                        <label class="section-title">Apna Naya Audio Upload Karein</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="audio-upload" name="audio_file" accept=".mp3,.wav,.m4a,.aac" class="file-input">
+                            <div class="file-upload-visual">
+                                <span id="audio-file-name">Select Audio File (.mp3, .wav)</span>
+                                <button type="button" class="button-secondary">Browse</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Real Human Voice Selector (Visible in ai_translate, voice_clone, and text_translate) -->
+                    <div class="form-group" id="voice-selector-group">
+                        <label class="section-title">🎙️ Real Human Voice Chunein</label>
+                        <div class="clone-info-box">
+                            <p>✅ <strong>100% Real Insani Awaaz:</strong> Har voice card par <strong>"🔊 Sample Suniye"</strong> click karke test karein!</p>
+                        </div>
+
+                        <div class="voice-grid" id="voice-grid">
+                            <!-- 1. Jenny -->
+                            <div class="voice-card selected" data-voice="en-US-JennyNeural" onclick="selectVoice(this)">
+                                <span class="voice-avatar">👩</span>
+                                <span class="voice-name">Jenny</span>
+                                <span class="voice-tag">Female · American</span>
+                                <span class="voice-badge">🌟 Studio Natural</span>
+                                <button type="button" class="btn-voice-preview" onclick="playVoicePreview(event, 'en-US-JennyNeural')">🔊 Sample</button>
+                            </div>
+                            <!-- 2. Guy -->
+                            <div class="voice-card" data-voice="en-US-GuyNeural" onclick="selectVoice(this)">
+                                <span class="voice-avatar">👨</span>
+                                <span class="voice-name">Guy</span>
+                                <span class="voice-tag">Male · American</span>
+                                <span class="voice-badge">💼 Professional</span>
+                                <button type="button" class="btn-voice-preview" onclick="playVoicePreview(event, 'en-US-GuyNeural')">🔊 Sample</button>
+                            </div>
+                            <!-- 3. Christopher -->
+                            <div class="voice-card" data-voice="en-US-ChristopherNeural" onclick="selectVoice(this)">
+                                <span class="voice-avatar">👨‍💼</span>
+                                <span class="voice-name">Christopher</span>
+                                <span class="voice-tag">Male · American</span>
+                                <span class="voice-badge">🎙️ Realistic Narrative</span>
+                                <button type="button" class="btn-voice-preview" onclick="playVoicePreview(event, 'en-US-ChristopherNeural')">🔊 Sample</button>
+                            </div>
+                            <!-- 4. Michelle -->
+                            <div class="voice-card" data-voice="en-US-MichelleNeural" onclick="selectVoice(this)">
+                                <span class="voice-avatar">👩‍🦰</span>
+                                <span class="voice-name">Michelle</span>
+                                <span class="voice-tag">Female · American</span>
+                                <span class="voice-badge">✨ Expressive</span>
+                                <button type="button" class="btn-voice-preview" onclick="playVoicePreview(event, 'en-US-MichelleNeural')">🔊 Sample</button>
+                            </div>
+                            <!-- 5. Eric -->
+                            <div class="voice-card" data-voice="en-US-EricNeural" onclick="selectVoice(this)">
+                                <span class="voice-avatar">👨‍💻</span>
+                                <span class="voice-name">Eric</span>
+                                <span class="voice-tag">Male · American</span>
+                                <span class="voice-badge">💬 Conversational</span>
+                                <button type="button" class="btn-voice-preview" onclick="playVoicePreview(event, 'en-US-EricNeural')">🔊 Sample</button>
+                            </div>
+                            <!-- 6. Uzma (Urdu) -->
+                            <div class="voice-card" data-voice="ur-PK-UzmaNeural" onclick="selectVoice(this)">
+                                <span class="voice-avatar">🇵🇰</span>
+                                <span class="voice-name">Uzma (عظمیٰ)</span>
+                                <span class="voice-tag">Female · Urdu (PK)</span>
+                                <span class="voice-badge">🇵🇰 Real Urdu Voice</span>
+                                <button type="button" class="btn-voice-preview" onclick="playVoicePreview(event, 'ur-PK-UzmaNeural')">🔊 Sample</button>
+                            </div>
+                            <!-- 7. Asad (Urdu) -->
+                            <div class="voice-card" data-voice="ur-PK-AsadNeural" onclick="selectVoice(this)">
+                                <span class="voice-avatar">🇵🇰</span>
+                                <span class="voice-name">Asad (اسد)</span>
+                                <span class="voice-tag">Male · Urdu (PK)</span>
+                                <span class="voice-badge">🇵🇰 Real Urdu Voice</span>
+                                <button type="button" class="btn-voice-preview" onclick="playVoicePreview(event, 'ur-PK-AsadNeural')">🔊 Sample</button>
+                            </div>
+                            <!-- 8. Sonia -->
+                            <div class="voice-card" data-voice="en-GB-SoniaNeural" onclick="selectVoice(this)">
+                                <span class="voice-avatar">👩‍🏫</span>
+                                <span class="voice-name">Sonia</span>
+                                <span class="voice-tag">Female · British</span>
+                                <span class="voice-badge">🇬🇧 British Elegant</span>
+                                <button type="button" class="btn-voice-preview" onclick="playVoicePreview(event, 'en-GB-SoniaNeural')">🔊 Sample</button>
+                            </div>
+                            <!-- 9. Ryan -->
+                            <div class="voice-card" data-voice="en-GB-RyanNeural" onclick="selectVoice(this)">
+                                <span class="voice-avatar">👨‍🎤</span>
+                                <span class="voice-name">Ryan</span>
+                                <span class="voice-tag">Male · British</span>
+                                <span class="voice-badge">🇬🇧 British Crisp</span>
+                                <button type="button" class="btn-voice-preview" onclick="playVoicePreview(event, 'en-GB-RyanNeural')">🔊 Sample</button>
+                            </div>
+                            <!-- 10. Neerja -->
+                            <div class="voice-card" data-voice="en-IN-NeerjaNeural" onclick="selectVoice(this)">
+                                <span class="voice-avatar">🌸</span>
+                                <span class="voice-name">Neerja</span>
+                                <span class="voice-tag">Female · Indian Eng</span>
+                                <span class="voice-badge">🌸 Clear & Soft</span>
+                                <button type="button" class="btn-voice-preview" onclick="playVoicePreview(event, 'en-IN-NeerjaNeural')">🔊 Sample</button>
+                            </div>
+                            <!-- 11. Prabhat -->
+                            <div class="voice-card" data-voice="en-IN-PrabhatNeural" onclick="selectVoice(this)">
+                                <span class="voice-avatar">👔</span>
+                                <span class="voice-name">Prabhat</span>
+                                <span class="voice-tag">Male · Indian Eng</span>
+                                <span class="voice-badge">👔 Natural Indian</span>
+                                <button type="button" class="btn-voice-preview" onclick="playVoicePreview(event, 'en-IN-PrabhatNeural')">🔊 Sample</button>
+                            </div>
+                        </div>
+
+                        <!-- Speed Adjustment -->
+                        <div class="controls-row">
+                            <label style="font-weight: 500; font-size: 14px;">⚡ Bolne ki Raftaar (Speed):</label>
+                            <select id="voice-speed" class="speed-select">
+                                <option value="-10%">0.9x — Aaram se & Wazah (Clear & Slow)</option>
+                                <option value="+0%" selected>1.0x — Bilkul Normal & Natural</option>
+                                <option value="+10%">1.1x — Thoda Tez & Energetic</option>
+                            </select>
+                        </div>
+
+                        <input type="hidden" id="selected-voice" value="en-US-JennyNeural">
+                    </div>
+
+                    <button type="submit" class="button-primary submit-btn" id="submit-btn">Processing Start Karein 🚀</button>
+                </form>
+
+                <!-- Processing / Loading State -->
+                <div id="loading-state" class="hidden">
+                    <div class="spinner"></div>
+                    <p style="font-weight: 500;">Processing chal rahi hai... Kripya intezaar karein.</p>
+                    <div class="progress-container">
+                        <div id="progress-bar" class="progress-bar"></div>
+                    </div>
+                    <p id="progress-text" class="progress-text">0%</p>
+                </div>
+
+                <!-- Text-to-Audio Result State -->
+                <div id="text-result-state" class="hidden">
+                    <div class="success-banner">
+                        <span class="badge-coral">SUCCESS</span>
+                        <h3>Audio Taiyar Hai! 🎙️</h3>
+                    </div>
+                    <div class="audio-container">
+                        <audio id="output-audio" controls style="width:100%; margin: 8px 0;"></audio>
+                    </div>
+                    <a id="download-audio-link" class="button-primary download-btn" download="translated_human_voice.mp3">
+                        Download Audio (MP3) 📥
+                    </a>
+                    <button type="button" class="button-secondary" style="margin-top:0.5rem; pointer-events:auto;" onclick="resetTextForm()">Dobara Naya Text Likhein 🔄</button>
+                </div>
+
+                <!-- Video Result State -->
+                <div id="result-state" class="hidden">
+                    <div class="success-banner">
+                        <span class="badge-coral">SUCCESS</span>
+                        <h3>Video Taiyar Hai! 🎬</h3>
+                    </div>
+                    
+                    <div class="video-container">
+                        <video id="output-video" controls></video>
+                    </div>
+
+                    <a id="download-link" class="button-primary download-btn" download="translated_video.mp4">
+                        Download Video (MP4) 📥
+                    </a>
+                    <button type="button" class="button-secondary" style="margin-top:0.5rem; width:100%; pointer-events:auto;" onclick="resetForm()">Dusri Video Convert Karein 🔄</button>
+                </div>
+                
+                <!-- Error State -->
+                <div id="error-state" class="hidden">
+                    <div class="error-banner">
+                        <h3>Error Occurred</h3>
+                        <p id="error-message"></p>
+                    </div>
+                    <button type="button" class="button-secondary" style="margin-top:1rem; pointer-events:auto;" onclick="resetForm()">Dobara Koshish Karein 🔄</button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <audio id="preview-audio-player" style="display:none;"></audio>
+
+    <footer class="footer">
+        <p>© 2026 AI Real Human Voice Studio. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
